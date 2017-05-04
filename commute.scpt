@@ -8,8 +8,8 @@ else
 end if
 set EngCounter to 0
 set HebCounter to 0
-set the Eng_AZ to "abcdefghijklmnopqrstuvxyz,w"
-set the Heb_AB to "שנבגקכעיןחלךצמםפ/רדאוה׳סטזת"
+set the Eng_AZ to ";.abcdefghijklmnopqrstuvxyzw,"
+set the Heb_AB to "ףץשנבגקכעיןחלךצמםפ/רדאוהסטז'ת'"
 set orgclip to (get the clipboard)
 delay 0.2
 log "slecting and copying"
