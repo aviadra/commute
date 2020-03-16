@@ -1,17 +1,18 @@
 set activeKbdLayout to my getActiveKeyboardLayout() # ->, e.g., "U.S."
-if activeKbdLayout is not "U.S." then
+set i to 100
+repeat until activeKbdLayout is "U.S." or i = 0
 	my switchToInputSource("U.S.")
-	log "stwitched to US"
-	delay 1
-else
-	log "was already US"
-end if
+	set i to i - 1
+	#log i
+	#log activeKbdLayout
+	set activeKbdLayout to my getActiveKeyboardLayout() # ->, e.g., "U.S."
+end repeat
+
 set EngCounter to 0
 set HebCounter to 0
 set the Eng_AZ to ";.abcdefghijklmnopqrstuvxyzw,"
 set the Heb_AB to "ףץשנבגקכעיןחלךצמםפ/רדאוהסטז'ת'"
 set orgclip to (get the clipboard)
-delay 0.2
 log "slecting and copying"
 tell application "System Events"
 	log "right"
@@ -20,9 +21,8 @@ tell application "System Events"
 	key code 124 using {command down, shift down}
 	log "ctrl C"
 	keystroke "c" using {command down}
-	delay 0.5
+	delay 0.2
 end tell
-
 log "this_text from clip"
 set this_text to (get the clipboard as text)
 log "start of loop wat lang"
@@ -62,7 +62,7 @@ set the new_text to replace_chars(new_text, "'", "w")
 
 log "Setting clip"
 set the clipboard to {text:(new_text as string), Unicode text:new_text}
-delay 0.1
+
 log "slecting END"
 tell application "System Events"
 	key code 123 using {command down}
@@ -73,24 +73,34 @@ log "pasting"
 tell application "System Events"
 	keystroke "v" using {command down}
 end tell
+
 log "switching lang"
 #tell application "System Events" to keystroke space using control down
 my switchToInputSource(InputDisLang)
+
 log "Restoring org clip"
-delay 2
+delay 0.2
 set the clipboard to orgclip
 return "done"
 
 
-
 on switchToInputSource(name)
-	tell application "System Events" to tell process "SystemUIServer"
-		
-		tell (1st menu bar item of menu bar 1 whose description is "text input") to {click, click (menu 1's menu item name)}
-		
+	launch application "System Events"
+	delay 0.2
+	ignoring application responses
+		tell application "System Events" to tell process "TextInputMenuAgent"
+			click menu bar item 1 of menu bar 2
+		end tell
+	end ignoring
+	do shell script "killall System\\ Events"
+	delay 0.2
+	tell application "System Events" to tell process "TextInputMenuAgent"
+		tell menu bar item 1 of menu bar 2
+			click menu item name of menu 1
+		end tell
 	end tell
+	log "switchToInputSource fin"
 end switchToInputSource
-
 
 on getActiveKeyboardLayout()
 	
@@ -131,6 +141,3 @@ on replace_chars(this_text, search_string, replacement_string)
 	set AppleScript's text item delimiters to ""
 	return this_text
 end replace_chars
-
-#sudnv
-#what if i wanted heb
