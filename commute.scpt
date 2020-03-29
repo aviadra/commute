@@ -1,5 +1,5 @@
 set activeKbdLayout to my getActiveKeyboardLayout() # ->, e.g., "U.S."
-set i to 100
+set i to 10
 repeat until activeKbdLayout is "U.S." or i = 0
 	my switchToInputSource("U.S.")
 	set i to i - 1
@@ -40,6 +40,7 @@ if EngCounter is greater than HebCounter then
 	set WantedLang to Heb_AB
 	set DisWantedLang to Eng_AZ
 	set InputDisLang to "Hebrew - PC"
+	set InputDisLangChomped to "Hebrew-PC"
 else
 	log "need to revers HEB to ENG"
 	set WantedLang to Eng_AZ
@@ -63,7 +64,7 @@ set the new_text to replace_chars(new_text, "'", "w")
 log "Setting clip"
 set the clipboard to {text:(new_text as string), Unicode text:new_text}
 
-log "slecting END"
+log "selecting END"
 tell application "System Events"
 	key code 123 using {command down}
 	key code 124 using {command down, shift down}
@@ -74,15 +75,25 @@ tell application "System Events"
 	keystroke "v" using {command down}
 end tell
 
-log "switching lang"
-#tell application "System Events" to keystroke space using control down
-my switchToInputSource(InputDisLang)
+log "Setting keyboard to desired lang"
+set i to 10
+repeat until activeKbdLayout is InputDisLang or i = 0 or activeKbdLayout is InputDisLangChomped
+	my switchToInputSource(InputDisLang)
+	log "@@@@@@@@@@@@@"
+	log InputDisLang
+	log "@@@@@@@@@@@@@"
+	set i to i - 1
+	log i
+	log "#############"
+	log activeKbdLayout
+	log "#############"
+	set activeKbdLayout to my getActiveKeyboardLayout() # ->, e.g., "U.S."
+end repeat
 
 log "Restoring org clip"
 delay 0.2
 set the clipboard to orgclip
 return "done"
-
 
 on switchToInputSource(name)
 	launch application "System Events"
