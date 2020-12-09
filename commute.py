@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import pyautogui
 import pyperclip  # handy cross-platform clipboard text handler
 import time
